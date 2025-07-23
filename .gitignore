@@ -2,6 +2,7 @@
 
 **/.terraform.lock.hcl
 **/.venv
+**/secrets.yml
 
 # Below are the automatically generated entries from https://www.toptal.com/developers/gitignore/api/linux,macos,ansible,windows,terraform,visualstudiocode
 

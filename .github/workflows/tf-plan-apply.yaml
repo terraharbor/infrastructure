@@ -156,3 +156,8 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
       run: |
         terraform apply -auto-approve tfplan
+
+    - name: Dispatch Ansible workflow
+      uses: peter-evans/repository-dispatch@v3
+      with:
+        event-type: terraform-apply
