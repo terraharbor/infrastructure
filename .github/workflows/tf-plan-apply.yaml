@@ -158,7 +158,15 @@ jobs:
       run: |
         terraform apply -auto-approve tfplan
 
+    - name: Generate authentication token from GitHub App
+      id: app_token
+      uses: actions/create-github-app-token@v2.0.6
+      with:
+        app-id: ${{ secrets.TERRAHARBOR_MAINTAINER_APP_ID }}
+        private-key: ${{ secrets.TERRAHARBOR_MAINTAINER_PRIVATE_KEY }}
+
     - name: Dispatch Ansible workflow
       uses: peter-evans/repository-dispatch@v3
       with:
         event-type: terraform-apply
+        token: ${{ steps.app_token.outputs.token }}
