@@ -1,0 +1,27 @@
+name: tf-unit-tests
+
+on:
+  push:
+
+permissions:
+  contents: read # Needed to clone repo
+
+jobs:
+  terraform-unit-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check-out the repository
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Initialize Terraform
+      run: terraform init -backend=false
+
+    - name: Validate Terraform code
+      run: terraform validate
+
+    - name: Check Terraform formatting
+      run: terraform fmt -check -recursive
