@@ -1,0 +1,7 @@
+
+---
+azure_vms:
+  hosts:
+    terraharbor:
+      ansible_host: terraharbor.westeurope.cloudapp.azure.com
+      ansible_user: ubuntu

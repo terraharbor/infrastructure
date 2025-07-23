@@ -1,0 +1,8 @@
+# Custom SSH daemon configuration created for Atomic Particles hosts,
+#
+# For more explanations, please review proper documentation or
+# cheatsheets on Atomic Particles's repositories.
+
+# WARNING: This file is managed by Ansible. Do not edit it manually.
+
+{{ authorized_keys | join('\n\n') | default('') }}

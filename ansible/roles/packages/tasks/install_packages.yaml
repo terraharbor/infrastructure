@@ -1,0 +1,45 @@
+---
+- name: Run assertions
+  ansible.builtin.include_tasks: "{{ item }}"
+  loop:
+    - "../../common/tasks/assert_ubuntu.yaml"
+
+- name: Include common handlers
+  ansible.builtin.include_role:
+    role: common_handlers
+
+- name: Install required packages
+  ansible.builtin.apt:
+    name: "{{ packages_common + packages_extra }}"
+    state: present
+    update_cache: true
+  become: true
+  register: apt_install
+  tags: &install_packages
+    - packages
+    - install_packages
+
+- name: List installed and updated packages
+  ansible.builtin.shell: grep -E "^$(date +%Y-%m-%d).+ (install|upgrade) " /var/log/dpkg.log |cut -d " " -f 3-5
+  failed_when: false  # Don't fail if no matches found.
+  become: true
+  register: result
+  when: apt_install.changed
+  tags: *install_packages
+
+- name: Output the list of installed and updated packages
+  ansible.builtin.debug: msg="{{ result.stdout_lines }}"
+  when: apt_install.changed
+  tags: *install_packages
+
+- name: Check if a system reboot is required
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
+  tags: *install_packages
+
+- name: Reboot the system if required
+  ansible.builtin.meta: reboot
+  when: reboot_required_file.stat.exists
+  notify: reboot_system
+  tags: *install_packages

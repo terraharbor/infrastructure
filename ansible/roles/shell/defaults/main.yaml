@@ -1,0 +1,9 @@
+---
+shell_aliases_default:
+  - md5='openssl md5'
+  - sha1='openssl sha1'
+  - sha256='openssl dgst -sha256'
+  - random_macaddr="openssl rand -base64 32 | sha1 | sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/'"
+  - mydate='TZ="Europe/Zurich" date +"%a %d/%b/%Y %T %Z"'
+
+shell_aliases_extra: []

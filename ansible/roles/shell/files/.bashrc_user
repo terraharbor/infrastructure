@@ -1,0 +1,148 @@
+# .bashrc created for the Atomic Particles hosts.
+#
+# For more explanations, please review proper documentation or
+# cheatsheets on Atomic Particles's repositories.
+
+# WARNING: This file is managed by Ansible. Do not edit it manually.
+
+
+### BASH HISTORY ###
+
+
+# Don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth
+
+# Don't overwrite the history file, instead append to it.
+shopt -s histappend
+
+# Length (in lines; HISTSIZE) and size (HISTFILESIZE) of history file
+# (see bash manual for more settings).
+# From my understanding, in tmux this values don't have effect,
+# since tmux saves his own history.
+HISTSIZE=50000
+HISTFILESIZE=10000
+
+
+########
+
+
+### COMMAND PROMPT ###
+
+
+# Check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+
+# Uncomment for a colored prompt, if the terminal has the capability;
+# turned off by default to not distract the user: the focus in a terminal
+# window should be on the output of commands, not on the prompt.
+
+force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+  if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+    # We have color support; assume it's compliant with Ecma-48
+    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+    # a case would tend to support setf rather than setaf.)
+    color_prompt=yes
+  else
+    color_prompt=
+  fi
+fi
+
+
+# Define prompt colors and prompt variables
+
+if [ "$color_prompt" = yes ]; then
+  PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\] \[\033[00;94m\]\w\[\033[00m\] \[\033[01;32m\]\$\[\033[00m\] '
+else
+  PS1='${debian_chroot:+($debian_chroot)}\u@\h \w \$ '
+fi
+unset color_prompt force_color_prompt
+
+
+# Enable color support of ls and also add handy aliases
+
+if [ -x /usr/bin/dircolors ]; then
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  alias ls='ls -h --color=auto'
+  alias ll='ls -lh --color=auto'
+  alias lla='ls -lah --color=auto'
+fi
+
+export LS_COLORS=$LS_COLORS:'di=1;94:'
+
+
+# Enable colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+
+# Set PATH so it includes user's private ~/.local/bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+  PATH="$HOME/.local/bin:$PATH"
+fi
+
+
+# Add programmable bash autocompletion in /etc/bash_completion and
+# /etc/bash_completion.d
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# Configure bat if installed
+if [[ -x $(command -v bat) || -x $(command -v batcat) ]]; then
+  if [[ -x $(command -v batcat) ]]; then # On Linux systems the package is called batcat
+    alias bat='batcat'
+  fi
+  alias batunpaged='bat --paging=never'
+  alias bathelp='bat --plain --language=help'
+  function bhelp() {
+    "$@" --help 2>&1 | bat --plain --language=help
+  }
+fi
+
+# Configure fzf if installed
+if [[ -x $(command -v fzf) ]]; then
+  # If version 0.48.0 or later, use the --bash option to enable bash completion and key bindings
+  ver=$(fzf --version | awk '{print $1}')
+  if [ "$(printf '%s\n' "0.48.0" "$ver" | sort -V | head -n1)" == "0.48.0" ]; then
+    eval "$(fzf --bash)"
+  else
+    source /usr/share/doc/fzf/examples/key-bindings.bash 
+  fi
+fi
+
+
+#######
+
+
+### ALIASES ###
+
+
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+if [ -f ~/.shell_aliases ]; then
+  . ~/.shell_aliases
+fi
+# Add shell aliases from Ansible
+if [ -f ~/.shell_aliases_ansible ]; then
+  . ~/.shell_aliases_ansible
+fi
+
+
+#######
+
+
+### Show output at login ###
+
+if [ -f ~/.shell_motd ]; then
+  . ~/.shell_motd
+fi
+
+
+### Other parameters, probably added by certains programs when they're installed ###

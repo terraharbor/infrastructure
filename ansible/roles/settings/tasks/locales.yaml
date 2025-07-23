@@ -1,0 +1,38 @@
+---
+- name: Ensure localisation files for '{{ settings_system_locale }}' are available
+  community.general.locale_gen:
+    name: "{{ settings_system_locale }}"
+    state: present
+  become: true
+  tags: &locales_tags
+    - settings
+    - locales
+
+- name: Ensure localisation files for '{{ settings_system_language }}' are available
+  community.general.locale_gen:
+    name: "{{ settings_system_language }}"
+    state: present
+  become: true
+  tags: *locales_tags
+
+- name: Get current locale and language configuration
+  ansible.builtin.command: localectl status
+  register: locale_status
+  changed_when: false
+  tags: *locales_tags
+
+- name: Parse 'LANG' from current locale and language configuration
+  ansible.builtin.set_fact:
+    locale_lang: "{{ locale_status.stdout | regex_search('LANG=([^\n]+)', '\\1') | first }}"
+  tags: *locales_tags
+
+- name: Parse 'LANGUAGE' from current locale and language configuration
+  ansible.builtin.set_fact:
+    locale_language: "{{ locale_status.stdout | regex_search('LANGUAGE=([^\n]+)', '\\1') | default([locale_lang], true) | first }}"
+  tags: *locales_tags
+
+- name: Configure locale to '{{ settings_system_locale }}' and language to '{{ settings_system_language[:5] }}'
+  ansible.builtin.command: localectl set-locale LANG={{ settings_system_locale }} LANGUAGE={{ settings_system_language[:5] }} # Limit LANGUAGE to the language code only
+  when: locale_lang != settings_system_locale or locale_language[:5] != settings_system_language[:5]
+  become: true
+  tags: *locales_tags

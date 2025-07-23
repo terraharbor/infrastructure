@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# MOTD script for the Atomic Particles hosts.
+#
+# For more explanations, please review proper documentation or
+# cheatsheets on Atomic Particles's repositories.
+
+# WARNING: This file is managed by Ansible. Do not edit it manually.
+
+[ -f /etc/motd.tail ] && cat /etc/motd.tail || true

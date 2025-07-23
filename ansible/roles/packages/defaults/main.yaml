@@ -1,0 +1,17 @@
+---
+packages_common:
+  - sudo
+  - haveged
+  - git
+  - vim
+  - nano
+  - curl
+  - wget
+  - lsb-release
+  - figlet
+  - tmux
+  - glances
+  - fzf
+  - bat
+
+packages_extra: []
