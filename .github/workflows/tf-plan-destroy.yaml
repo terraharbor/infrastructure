@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: Select "Yes" to confirm the destruction of resources.
+        description: Select "Yes" to confirm the destruction of resources
         required: true
         default: "No"
         type: choice
@@ -75,7 +75,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: tfplan
-        path: tfplan
+        path: terraform/tfplan
         
     - name: Create plan string output
       id: tf-plan-string
