@@ -10,10 +10,11 @@ variable "location" {
   default     = "West Europe"
 }
 
-variable "public_ip_label_prefix" {
-  description = "The prefix to use for the public IP label. This is to avoid conflicts with other public IPs when the users deploy an application with the same name on the same region."
+variable "public_ip_label_suffix" {
+  description = "The suffix to use for the public IP label. This is to avoid conflicts with other public IPs when the users deploy an application with the same name on the same region."
   type        = string
-  default     = null
+  default     = ""
+  nullable    = false
 }
 
 variable "admin_ssh_public_key" {

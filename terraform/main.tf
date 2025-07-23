@@ -26,7 +26,7 @@ resource "azurerm_public_ip" "public_ip" {
   location            = resource.azurerm_resource_group.resource_group.location
   resource_group_name = resource.azurerm_resource_group.resource_group.name
   allocation_method   = "Static"
-  domain_name_label   = trimprefix(format("%s-%s", var.public_ip_label_prefix, var.app_name), "-")
+  domain_name_label   = trimsuffix(format("%s-%s", var.app_name, var.public_ip_label_suffix), "-")
 
   tags = local.resource_tags
 
