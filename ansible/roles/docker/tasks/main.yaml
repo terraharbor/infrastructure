@@ -8,6 +8,20 @@
   ansible.builtin.include_role:
     role: common_handlers
 
+- name: Install required packages for Docker
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - gnupg
+    - lsb-release
+  become: true
+  tags: &docker_tags
+    - docker
+
 - name: Add Docker's repository
   ansible.builtin.deb822_repository:
     name: docker
@@ -21,8 +35,7 @@
     state: present
     enabled: true
   become: true
-  tags: &docker_tags
-    - docker
+  tags: *docker_tags
 
 - name: Install Docker and Docker Compose
   ansible.builtin.apt:
@@ -35,6 +48,7 @@
     state: present
     update_cache: true
   become: true
+  notify: reboot_system
   tags: *docker_tags
 
 - name: Create 'docker' group

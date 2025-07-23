@@ -18,6 +18,14 @@
         - settings
         - locales
 
+    - name: Run upgrade_packages from packages
+      ansible.builtin.include_role:
+        name: packages
+        tasks_from: upgrade_packages
+      tags:
+        - packages
+        - upgrade_packages
+
     - name: Run install_packages from packages
       ansible.builtin.include_role:
         name: packages

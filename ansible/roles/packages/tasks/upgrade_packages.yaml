@@ -36,10 +36,7 @@
   ansible.builtin.stat:
     path: /var/run/reboot-required
   register: reboot_required_file
-  tags: *install_packages
-
-- name: Reboot the system if required
-  ansible.builtin.meta: reboot
-  when: reboot_required_file.stat.exists
+  changed_when: reboot_required_file.stat.exists
   notify: reboot_system
-  tags: *install_packages
+  become: true
+  tags: *upgrade_packages
