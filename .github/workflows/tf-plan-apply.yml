@@ -7,6 +7,16 @@ on:
   pull_request:
     branches:
     - main
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Select "Yes" to confirm the application of changes.
+        required: true
+        default: "No"
+        type: choice
+        options:
+          - "Yes"
+          - "No"
 
 # Special permissions required for OIDC authentication.
 permissions:
@@ -114,7 +124,7 @@ jobs:
             })
 
   terraform-apply:
-    if: github.ref == 'refs/heads/main' && needs.terraform-plan.outputs.tfplanExitCode == 2
+    if: github.ref == 'refs/heads/main' && needs.terraform-plan.outputs.tfplanExitCode == 2 && (github.event.inputs.confirmation == 'Yes' || github.event_name != 'workflow_dispatch')
     runs-on: ubuntu-latest
     needs: [terraform-plan]
     
