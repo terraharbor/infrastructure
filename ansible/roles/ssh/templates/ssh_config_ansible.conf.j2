@@ -1,0 +1,11 @@
+# Custom SSH daemon configuration created for Atomic Particles hosts,
+#
+# For more explanations, please review proper documentation or
+# cheatsheets on Atomic Particles's repositories.
+
+# WARNING: This file is managed by Ansible. Do not edit it manually.
+
+PermitRootLogin prohibit-password
+PubkeyAuthentication yes
+PasswordAuthentication no
+AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys_ansible {{ file_list | join(' ') | default('') }}

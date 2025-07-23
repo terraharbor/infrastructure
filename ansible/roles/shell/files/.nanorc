@@ -1,0 +1,31 @@
+# .nanorc file for the Atomic Particles hosts
+#
+# For more explanations, please review proper documentation or
+# cheatsheets on Atomic Particles's repositories.
+
+# Customize tab key behavior
+set tabsize 2
+set tabstospaces
+
+# Constantly display the cursor position in the status bar.
+# Constantly display the cursor position in the status bar. This overrides the option quickblank.
+set constantshow
+
+# Disable soft line wrapping for easier viewing of very long lines.
+unset softwrap
+
+# Bind Ctrl^F to search for the next occurrence in the forward direction.
+# Works after finding the first iteration with Ctrl^W.
+bind ^F findnext all
+
+# Make the Home key smarter. When Home is pressed anywhere but at the very
+# beginning of non-whitespace characters on a line, the cursor will jump to that
+# beginning (either forwards or backwards). If the cursor is already at that
+# position, it will jump to the true beginning of the line.
+set smarthome
+
+# Add new line at the end of the file when saving
+unset nonewlines
+
+# Enable all syntax highlighting (might only work on some systems)
+include "/usr/share/nano/*.nanorc"

@@ -1,0 +1,6 @@
+---
+- name: Assert that the OS is Ubuntu-based
+  ansible.builtin.assert:
+    that:
+      - ansible_os_family == 'Debian'
+    fail_msg: "This playbook is designed to run on Ubuntu-based systems only."

@@ -1,0 +1,5 @@
+---
+ssh_extra_authorized_keys_files: []
+
+ssh_authorized_keys_root: []
+ssh_authorized_keys_administrator: []

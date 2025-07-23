@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# MOTD script for the Atomic Particles hosts.
+#
+# For more explanations, please review proper documentation or
+# cheatsheets on Atomic Particles's repositories.
+
+# WARNING: This file is managed by Ansible. Do not edit it manually.
+
+[ -r /etc/lsb-release ] && . /etc/lsb-release
+
+if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
+        # Fall back to using the very slow lsb_release utility
+        DISTRIB_DESCRIPTION=$(lsb_release -s -d)
+fi
+
+echo ""
+figlet $(hostname) -w 120
+printf "\n"
+
+printf "Welcome to %s (%s).\n" "$DISTRIB_DESCRIPTION" "$(uname -r)"
+printf "\n"

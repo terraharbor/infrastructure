@@ -1,0 +1,45 @@
+---
+  name: ansible-vm-config
+  
+  on:
+    workflow_dispatch:
+
+    repository_dispatch:
+      types:
+        - terraform-apply
+
+  defaults:
+    run:
+      working-directory: ansible
+
+  jobs:
+    ansible:
+      runs-on: ubuntu-latest
+      steps:
+      - name: "Check out the repository"
+        uses: actions/checkout@v4
+  
+      - name: "Install Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+  
+      - name: "Install Ansible and requirements"
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+          pip install -r requirements.txt
+
+      - name: "Create key file from environment variable"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+  
+      - name: "Run Ansible Playbook"
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: false
+        run: |
+          ansible-playbook azure_vms_config.yaml -i inventories/azure_vms
