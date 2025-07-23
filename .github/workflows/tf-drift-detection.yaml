@@ -57,13 +57,13 @@ jobs:
         else 
           exit 0
         fi
-        
+
     - name: Publish Terraform Plan to GitHub Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: tfplan
-        path: tfplan
-        
+        path: terraform/tfplan
+
     - name: Create plan string output
       id: tf-plan-string
       run: |
@@ -79,7 +79,7 @@ jobs:
         echo '```' >> $GITHUB_OUTPUT
         echo "</details>" >> $GITHUB_OUTPUT
         echo "${delimiter}" >> $GITHUB_OUTPUT
-        
+
     # Publish Terraform Plan as task summary
     - name: Publish Terraform Plan to Task Summary
       env:
@@ -163,8 +163,8 @@ jobs:
                 issue_number: issue.number,
                 state: 'closed'
               })
-            } 
-             
+            }
+
     # Mark the workflow as failed if drift detected.
     - name: Error on failure
       if: steps.tf-plan.outputs.exitcode == 2
