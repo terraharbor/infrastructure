@@ -168,5 +168,5 @@ jobs:
     - name: Dispatch Ansible workflow
       uses: peter-evans/repository-dispatch@v3
       with:
-        event-type: terraform-apply
+        event-type: ansible-vm-config
         token: ${{ steps.app_token.outputs.token }}
