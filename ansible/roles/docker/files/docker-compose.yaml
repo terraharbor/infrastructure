@@ -8,7 +8,7 @@ networks:
 
 services:
   database:
-    image: 'bitnami/postgresql:17'
+    image: 'bitnami/postgresql:17@sha256:42a8200d35971f931b869ef5252d996e137c6beb4b8f1b6d2181dc7d1b6f62e0'
     hostname: 'database.internal'
     restart: unless-stopped
     environment:
@@ -66,7 +66,7 @@ services:
       - internal
 
   reverseproxy:
-    image: 'traefik:3'
+    image: 'traefik:3@sha256:4e7175cfe19be83c6b928cae49dde2f2788fb307189a4dc9550b67acf30c11a5'
     restart: unless-stopped
     # TODO Add healthcheck for frontend service
     # depends_on:
