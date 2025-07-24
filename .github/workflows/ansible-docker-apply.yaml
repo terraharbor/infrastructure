@@ -62,8 +62,8 @@ jobs:
       env:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.DOCKER_COMPOSE_APPLY_VAULT_PASSWORD }}
       run: |
-        echo "${DOCKER_COMPOSE_APPLY_VAULT_PASSWORD}" > ~/.docker_compose_apply_vault_password
-        chmod 600 ~/.docker_compose_apply_vault_password
+        echo "${DOCKER_COMPOSE_APPLY_VAULT_PASSWORD}" > .docker_compose_apply_vault_password
+        chmod 600 .docker_compose_apply_vault_password
 
     - name: Run Ansible Playbook
       env:
