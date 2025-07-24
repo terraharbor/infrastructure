@@ -34,25 +34,21 @@ jobs:
       run: |
         ansible-galaxy collection install -r requirements.yaml
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    # FIXME This action is deprecated and we should be able to use a simple docker images --format='{{.Tag}}' ghcr.io/terraharbor/frontend`
-    - name: Get tag for the latest frontend image
+    - name: Get latest frontend image tag
       id: frontend
-      uses: shrink/actions-docker-latest-image@v1
-      with:
-        repository: ghcr.io/terraharbor/frontend
+      run: |
+        LATEST_TAG=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/orgs/terraharbor/packages/container/frontend/versions" | \
+          jq -r '.[0].metadata.container.tags[0]')
+        echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
-    - name: Get tag for the latest backend image
+    - name: Get latest backend image tag  
       id: backend
-      uses: shrink/actions-docker-latest-image@v1
-      with:
-        repository: ghcr.io/terraharbor/backend
+      run: |
+        LATEST_TAG=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/orgs/terraharbor/packages/container/backend/versions" | \
+          jq -r '.[0].metadata.container.tags[0]')
+        echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
     - name: Create SSH key file from GitHub secret
       env:
