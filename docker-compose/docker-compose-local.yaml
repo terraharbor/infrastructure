@@ -1,0 +1,93 @@
+name: ${PROJECT_NAME}
+
+networks:
+  internal:
+    driver: bridge
+
+services:
+  database:
+    image: 'bitnami/postgresql:17'
+    hostname: 'database.internal'
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Zurich
+      - POSTGRESQL_POSTGRES_PASSWORD=${PG_ROOT_PASSWORD}
+      - POSTGRESQL_DATABASE=${PG_DATABASE_NAME}
+      - POSTGRESQL_USERNAME=${PG_DATABASE_USER}
+      - POSTGRESQL_PASSWORD=${PG_DATABASE_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/data:ro
+      # TODO Consider how to initialize the database schema and data
+      # - ./db/db-init-script.sh:/docker-entrypoint-initdb.d/db-init-script.sh:ro
+      # - ./db:/db-init-scripts:ro
+    networks:
+      - internal
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - TZ=Europe/Zurich
+    networks:
+      - internal
+
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+      # TODO Add healthcheck for backend service
+      # backend:
+      #   condition: service_healthy
+    environment:
+      - TZ=Europe/Zurich
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.frontend.loadbalancer.server.port=${FRONTEND_PORT}"
+      - "traefik.http.routers.frontend.rule=Host(`localhost`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+    networks:
+      - internal
+
+  reverseproxy:
+    image: 'traefik:3'
+    restart: unless-stopped
+    # TODO Add healthcheck for frontend service
+    # depends_on:
+    #   frontend:
+    #     condition: service_healthy
+    environment:
+      - TZ=Europe/Zurich
+    command:
+      - "--global.checknewversion=false"
+      - "--global.sendAnonymousUsage=false"
+      # - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+    networks:
+      - internal
+    ports:
+      - 80:80
+      - 8080:8080 # Traefik Dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+volumes:
+  db-data:

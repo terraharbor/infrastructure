@@ -1,0 +1,76 @@
+---
+- name: Run assertions
+  ansible.builtin.include_tasks: "{{ item }}"
+  loop:
+    - "../../common/tasks/assert_ubuntu.yaml"
+
+- name: Include common handlers
+  ansible.builtin.include_role:
+    role: common_handlers
+
+- name: Install required packages for Docker
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - gnupg
+    - lsb-release
+  become: true
+  tags: &docker_tags
+    - docker
+    - docker_install
+
+- name: Add Docker's repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: [deb]
+    uris:
+      - https://download.docker.com/linux/ubuntu
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
+    suites: ["{{ ansible_distribution_release | lower }}"]
+    components:
+      - stable
+    state: present
+    enabled: true
+  become: true
+  tags: *docker_tags
+
+- name: Install Docker and Docker Compose
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+  become: true
+  notify: reboot_system
+  tags: *docker_tags
+
+- name: Create 'docker' group
+  ansible.builtin.group:
+    name: docker
+    state: present
+  become: true
+  tags: *docker_tags
+
+- name: Add 'ubuntu' user to 'docker' group
+  ansible.builtin.user:
+    name: ubuntu
+    groups: docker
+    append: true
+  become: true
+  tags: *docker_tags
+
+- name: Start Docker service
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+  become: true
+  tags: *docker_tags

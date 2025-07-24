@@ -1,0 +1,47 @@
+---
+- name: Run assertions
+  ansible.builtin.include_tasks: "{{ item }}"
+  loop:
+    - "../../common/tasks/assert_ubuntu.yaml"
+
+- name: Include common handlers
+  ansible.builtin.include_role:
+    role: common_handlers
+
+- name: Create necessary directories
+  ansible.builtin.file:
+    path: /home/ubuntu/terraharbor
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Copy Docker Compose files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /home/ubuntu/terraharbor/
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+    force: true
+  loop:
+    - "docker-compose.yaml"
+    - ".env"
+
+- name: Create .env_ansible file
+  ansible.builtin.template:
+    src: ".env_ansible.j2"
+    dest: /home/ubuntu/terraharbor/.env_ansible
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+    force: true
+
+- name: Apply Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /home/ubuntu/terraharbor
+    files:
+      - docker-compose.yaml
+    env_files:
+      - .env
+      - .env_ansible

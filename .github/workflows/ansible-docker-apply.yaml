@@ -1,0 +1,68 @@
+---
+name: ansible-docker-apply
+
+on:
+  workflow_dispatch:
+
+  repository_dispatch:
+    types:
+      - ansible-docker-apply
+
+defaults:
+  run:
+    working-directory: ansible
+
+jobs:
+  ansible-docker-apply:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check-out the repository
+      uses: actions/checkout@v4
+
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.13"
+
+    - name: Install Ansible and requirements
+      run: |
+        python -m pip install --upgrade pip
+        pip install ansible
+        pip install -r requirements.txt
+
+    - name: Install Ansible collections
+      run: |
+        ansible-galaxy collection install -r requirements.yaml
+
+    - name: Get tag for the latest frontend image
+      id: frontend
+      uses: shrink/actions-docker-latest-image@v1
+      with:
+        repository: ghcr.io/terraharbor/frontend
+
+    - name: Get tag for the latest backend image
+      id: backend
+      uses: shrink/actions-docker-latest-image@v1
+      with:
+        repository: ghcr.io/terraharbor/backend
+
+    - name: Create SSH key file from GitHub secret
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+
+    - name: Create Ansible vault password file
+      env:
+        ANSIBLE_VAULT_PASSWORD: ${{ secrets.DOCKER_COMPOSE_APPLY_VAULT_PASSWORD }}
+      run: |
+        echo "${DOCKER_COMPOSE_APPLY_VAULT_PASSWORD}" > ~/.docker_compose_apply_vault_password
+        chmod 600 ~/.docker_compose_apply_vault_password
+
+    - name: Run Ansible Playbook
+      env:
+        ANSIBLE_HOST_KEY_CHECKING: false
+      run: |
+        ansible-playbook docker_apply.yaml -i inventories/azure_vms --vault-id docker_compose_apply@.docker_compose_apply_vault_password --extra-vars "docker_apply_env_variables.FRONTEND_IMAGE_VERSION=${{ steps.frontend.outputs.tag }} docker_apply_env_variables.BACKEND_IMAGE_VERSION=${{ steps.backend.outputs.tag }}"

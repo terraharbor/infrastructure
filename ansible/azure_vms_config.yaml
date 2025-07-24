@@ -44,8 +44,10 @@
         - vim
         - nano
 
-    - name: Run docker
+    - name: Run docker_install from docker
       ansible.builtin.include_role:
         name: docker
+        tasks_from: docker_install
       tags:
         - docker
+        - docker_install
