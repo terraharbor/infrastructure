@@ -1,11 +1,11 @@
 name: terraform-drift-detection
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   schedule:
     - cron: '41 3 * * *' # Run nightly at 3:41 am
 
-# Special permissions required for OIDC authentication
+# Special permissions required for OIDC authentication.
 permissions:
   id-token: write
   contents: read
