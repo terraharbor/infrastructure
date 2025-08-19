@@ -2,9 +2,11 @@ name: tf-unit-tests
 
 on:
   push:
+    paths:
+    - 'terraform/**'
 
 permissions:
-  contents: read # Needed to clone repo
+  contents: read # Needed to clone repo.
 
 jobs:
   terraform-unit-tests:
