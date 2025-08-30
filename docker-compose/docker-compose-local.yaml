@@ -6,7 +6,7 @@ networks:
 
 services:
   database:
-    image: 'postgres:17'
+    image: 'postgres:17.6'
     hostname: 'database.internal'
     restart: unless-stopped
     environment:
@@ -65,7 +65,7 @@ services:
       - internal
 
   reverseproxy:
-    image: 'traefik:3'
+    image: 'traefik:3.5.1'
     restart: unless-stopped
     # TODO Add healthcheck for frontend service
     # depends_on:
