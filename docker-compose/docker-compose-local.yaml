@@ -91,3 +91,4 @@ services:
 
 volumes:
   db-data:
+  tf-states:

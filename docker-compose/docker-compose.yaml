@@ -98,7 +98,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ssl-certs:/letsencrypt:rw
 
-
 volumes:
   db-data:
+  tf-states:
   ssl-certs:
