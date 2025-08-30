@@ -6,7 +6,7 @@ networks:
 
 services:
   database:
-    image: 'bitnami/postgresql:17'
+    image: 'postgres:17'
     hostname: 'database.internal'
     restart: unless-stopped
     environment:
