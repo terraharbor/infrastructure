@@ -42,7 +42,7 @@ jobs:
           jq -r '.[0].metadata.container.tags[0]')
         echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
-    - name: Get latest backend image tag  
+    - name: Get latest backend image tag
       id: backend
       run: |
         LATEST_TAG=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
@@ -68,5 +68,7 @@ jobs:
     - name: Run Ansible Playbook
       env:
         ANSIBLE_HOST_KEY_CHECKING: false
+        FRONTEND_IMAGE_VERSION: ${{ steps.frontend.outputs.tag }}
+        BACKEND_IMAGE_VERSION: ${{ steps.backend.outputs.tag }}
       run: |
-        ansible-playbook docker_apply.yaml -i inventories/azure_vms --vault-id docker_compose_apply@.docker_compose_apply_vault_password --extra-vars "docker_apply_env_variables.FRONTEND_IMAGE_VERSION=${{ steps.frontend.outputs.tag }} docker_apply_env_variables.BACKEND_IMAGE_VERSION=${{ steps.backend.outputs.tag }}"
+        ansible-playbook docker_apply.yaml -i inventories/azure_vms --vault-id docker_compose_apply@.docker_compose_apply_vault_password
