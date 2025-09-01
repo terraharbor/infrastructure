@@ -16,9 +16,32 @@
     group: ubuntu
     mode: '0755'
 
+- name: Checkout `backend` repository
+  ansible.builtin.git:
+    repo: 'https://github.com/terraharbor/backend.git'
+    dest: /tmp/backend
+    version: "{{ docker_apply_repo_version_backend }}"
+    force: yes
+
+- name: Copy database initialization scripts
+  ansible.builtin.copy:
+    src: /tmp/backend/database
+    dest: /home/ubuntu/terraharbor/database
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+    force: true
+
+- name: Checkout `infrastructure` repository
+  ansible.builtin.git:
+    repo: 'https://github.com/terraharbor/infrastructure.git'
+    dest: /tmp/infrastructure
+    version: "{{ docker_apply_repo_version_infrastructure }}"
+    force: yes
+
 - name: Copy Docker Compose files
   ansible.builtin.copy:
-    src: "{{ item }}"
+    src: "/tmp/infrastructure/docker-compose/{{ item }}"
     dest: /home/ubuntu/terraharbor/
     owner: ubuntu
     group: ubuntu
