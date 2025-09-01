@@ -26,3 +26,6 @@
             39663235386233643964623134333238636239376161323833376335636630313161
           FRONTEND_IMAGE_VERSION: "{{ lookup('ansible.builtin.env', 'FRONTEND_IMAGE_VERSION', default='latest') }}"
           BACKEND_IMAGE_VERSION: "{{ lookup('ansible.builtin.env', 'BACKEND_IMAGE_VERSION', default='latest') }}"
+
+        docker_apply_repo_version_backend: "{{ lookup('ansible.builtin.env', 'BACKEND_IMAGE_VERSION', default='main') }}"
+        docker_apply_repo_version_infrastructure: "{{ lookup('ansible.builtin.env', 'INFRASTRUCTURE_REPO_BRANCH', default='main') }}"

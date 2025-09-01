@@ -26,7 +26,8 @@
 - name: Copy database initialization scripts
   ansible.builtin.copy:
     src: /tmp/backend/database
-    dest: /home/ubuntu/terraharbor/database
+    dest: /home/ubuntu/terraharbor/
+    remote_src: true # The files are on the destination host.
     owner: ubuntu
     group: ubuntu
     mode: '0755'
@@ -43,6 +44,7 @@
   ansible.builtin.copy:
     src: "/tmp/infrastructure/docker-compose/{{ item }}"
     dest: /home/ubuntu/terraharbor/
+    remote_src: true # The files are on the destination host.
     owner: ubuntu
     group: ubuntu
     mode: '0644'
