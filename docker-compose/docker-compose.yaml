@@ -7,6 +7,7 @@ networks:
 services:
   database:
     image: 'postgres:17.6'
+    platform: linux/amd64
     hostname: 'database.internal'
     restart: unless-stopped
     environment:
@@ -33,6 +34,7 @@ services:
 
   backend:
     image: '${BACKEND_IMAGE}:${BACKEND_IMAGE_VERSION}'
+    platform: linux/amd64
     restart: unless-stopped
     depends_on:
       database:
@@ -52,6 +54,7 @@ services:
 
   frontend:
     image: '${FRONTEND_IMAGE}:${FRONTEND_IMAGE_VERSION}'
+    platform: linux/amd64
     restart: unless-stopped
     depends_on:
       database:
@@ -73,6 +76,7 @@ services:
 
   reverseproxy:
     image: 'traefik:3.5.1'
+    platform: linux/amd64
     restart: unless-stopped
     # TODO Add healthcheck for frontend service
     # depends_on:
