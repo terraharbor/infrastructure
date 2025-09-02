@@ -4,27 +4,26 @@ networks:
   internal:
     driver: bridge
 
-# TODO Add setup container to verify environment variables and fail if not properly set
-
 services:
   database:
-    image: 'postgres:17'
+    image: 'postgres:17.6'
+    platform: linux/amd64
     hostname: 'database.internal'
     restart: unless-stopped
     environment:
       - TZ=Europe/Zurich
-      - POSTGRESQL_POSTGRES_PASSWORD=${PG_ROOT_PASSWORD}
-      - POSTGRESQL_DATABASE=${PG_DATABASE_NAME}
-      - POSTGRESQL_USERNAME=${PG_DATABASE_USER}
-      - POSTGRESQL_PASSWORD=${PG_DATABASE_PASSWORD}
+      - POSTGRES_PASSWORD=${PG_ROOT_PASSWORD}
+      - POSTGRES_DB=${TERRAHARBOR_DB_NAME}
+      - TERRAHARBOR_DB_NAME=${TERRAHARBOR_DB_NAME}
+      - TERRAHARBOR_DB_USER=${TERRAHARBOR_DB_USER}
+      - TERRAHARBOR_DB_PASSWORD=${TERRAHARBOR_DB_PASSWORD}
     # Expose the database port on the VM to make it accessible from the host machine.
-    # ports:
-    #   - 5432:5432 # FIXME Is there a way to expose this conditionally?
+    ports:
+      - 5432:5432
     volumes:
-      - db-data:/data:ro
-      # TODO Consider how to initialize the database schema and data
-      # - ./db/db-init-script.sh:/docker-entrypoint-initdb.d/db-init-script.sh:ro
-      # - ./db:/db-init-scripts:ro
+      - db-data:/var/lib/postgresql/data:rw # This path will change for versions >= 18. Check official documentation of the Docker image.
+      - /home/ubuntu/terraharbor/database/db-init.sh:/docker-entrypoint-initdb.d/db-init.sh:ro
+      - /home/ubuntu/terraharbor/database/db-init-scripts:/db-init-scripts:ro
     networks:
       - internal
     healthcheck:
@@ -35,17 +34,27 @@ services:
 
   backend:
     image: '${BACKEND_IMAGE}:${BACKEND_IMAGE_VERSION}'
+    platform: linux/amd64
     restart: unless-stopped
     depends_on:
       database:
         condition: service_healthy
     environment:
       - TZ=Europe/Zurich
+      - POSTGRES_HOST=database.internal
+      - POSTGRES_DB=${TERRAHARBOR_DB_NAME}
+      - POSTGRES_USER=${TERRAHARBOR_DB_USER}
+      - POSTGRES_PASSWORD=${TERRAHARBOR_DB_PASSWORD}
+    ports:
+      - 8000:8000
+    volumes:
+      - tf-states:/data:rw
     networks:
       - internal
 
   frontend:
     image: '${FRONTEND_IMAGE}:${FRONTEND_IMAGE_VERSION}'
+    platform: linux/amd64
     restart: unless-stopped
     depends_on:
       database:
@@ -66,7 +75,8 @@ services:
       - internal
 
   reverseproxy:
-    image: 'traefik:3'
+    image: 'traefik:3.5.1'
+    platform: linux/amd64
     restart: unless-stopped
     # TODO Add healthcheck for frontend service
     # depends_on:
@@ -98,7 +108,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ssl-certs:/letsencrypt:rw
 
-
 volumes:
   db-data:
+  tf-states:
   ssl-certs:

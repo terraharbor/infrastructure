@@ -6,22 +6,22 @@ networks:
 
 services:
   database:
-    image: 'postgres:17'
+    image: 'postgres:17.6'
     hostname: 'database.internal'
     restart: unless-stopped
     environment:
       - TZ=Europe/Zurich
-      - POSTGRESQL_POSTGRES_PASSWORD=${PG_ROOT_PASSWORD}
-      - POSTGRESQL_DATABASE=${PG_DATABASE_NAME}
-      - POSTGRESQL_USERNAME=${PG_DATABASE_USER}
-      - POSTGRESQL_PASSWORD=${PG_DATABASE_PASSWORD}
+      - POSTGRES_PASSWORD=${PG_ROOT_PASSWORD}
+      - POSTGRES_DB=${TERRAHARBOR_DB_NAME}
+      - TERRAHARBOR_DB_NAME=${TERRAHARBOR_DB_NAME}
+      - TERRAHARBOR_DB_USER=${TERRAHARBOR_DB_USER}
+      - TERRAHARBOR_DB_PASSWORD=${TERRAHARBOR_DB_PASSWORD}
     ports:
       - 5432:5432
     volumes:
-      - db-data:/data:ro
-      # TODO Consider how to initialize the database schema and data
-      # - ./db/db-init-script.sh:/docker-entrypoint-initdb.d/db-init-script.sh:ro
-      # - ./db:/db-init-scripts:ro
+      - db-data:/var/lib/postgresql/data:rw # This path will change for versions >= 18. Check official documentation of the Docker image.
+      - ../../backend/database/db-init.sh:/docker-entrypoint-initdb.d/db-init.sh:ro
+      - ../../backend/database/db-init-scripts:/db-init-scripts:ro
     networks:
       - internal
     healthcheck:
@@ -40,6 +40,14 @@ services:
         condition: service_healthy
     environment:
       - TZ=Europe/Zurich
+      - POSTGRES_HOST=database.internal
+      - POSTGRES_DB=${TERRAHARBOR_DB_NAME}
+      - POSTGRES_USER=${TERRAHARBOR_DB_USER}
+      - POSTGRES_PASSWORD=${TERRAHARBOR_DB_PASSWORD}
+    ports:
+      - 8000:8000
+    volumes:
+      - tf-states:/data:rw
     networks:
       - internal
 
@@ -65,7 +73,7 @@ services:
       - internal
 
   reverseproxy:
-    image: 'traefik:3'
+    image: 'traefik:3.5.1'
     restart: unless-stopped
     # TODO Add healthcheck for frontend service
     # depends_on:
@@ -91,3 +99,4 @@ services:
 
 volumes:
   db-data:
+  tf-states:

@@ -1,0 +1,4 @@
+docker_apply_env_variables: {}
+
+docker_apply_repo_version_backend: main
+docker_apply_repo_version_infrastructure: main
