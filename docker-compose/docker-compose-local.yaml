@@ -44,12 +44,22 @@ services:
       - POSTGRES_DB=${TERRAHARBOR_DB_NAME}
       - POSTGRES_USER=${TERRAHARBOR_DB_USER}
       - POSTGRES_PASSWORD=${TERRAHARBOR_DB_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.backend.loadbalancer.server.port=${BACKEND_PORT}"
+      - "traefik.http.routers.backend.rule=Host(`localhost`) && PathPrefix(`/state`)"
+      - "traefik.http.routers.backend.entrypoints=web"
     ports:
       - 8000:8000
     volumes:
       - tf-states:/data:rw
     networks:
       - internal
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   frontend:
     build:
@@ -57,17 +67,14 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
-      database:
+      backend:
         condition: service_healthy
-      # TODO Add healthcheck for backend service
-      # backend:
-      #   condition: service_healthy
     environment:
       - TZ=Europe/Zurich
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.frontend.loadbalancer.server.port=${FRONTEND_PORT}"
-      - "traefik.http.routers.frontend.rule=Host(`localhost`)"
+      - "traefik.http.routers.frontend.rule=Host(`localhost`) && !PathPrefix(`/state`)"
       - "traefik.http.routers.frontend.entrypoints=web"
     networks:
       - internal
@@ -75,8 +82,10 @@ services:
   reverseproxy:
     image: 'traefik:3.5.1'
     restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
     # TODO Add healthcheck for frontend service
-    # depends_on:
     #   frontend:
     #     condition: service_healthy
     environment:
