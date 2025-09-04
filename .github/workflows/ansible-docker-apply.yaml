@@ -8,6 +8,13 @@ on:
     types:
       - ansible-docker-apply
 
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker-compose/**'
+      - 'ansible/**'
+
 defaults:
   run:
     working-directory: ansible
