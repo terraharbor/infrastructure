@@ -1,5 +1,7 @@
 <h1 align="center" style="margin-top: 0px;">infrastructure</h1>
 
+<p align="center">Infrastructure as Code repository for the TerraHarbor project</p>
+
 <div align="center">
 
 ![Release](https://img.shields.io/github/v/release/terraharbor/infrastructure?style=for-the-badge) ![License](https://img.shields.io/github/license/terraharbor/infrastructure?style=for-the-badge&logo=gplv3)
@@ -7,19 +9,16 @@
 
 </div>
 
-Infrastructure as Code repository for the TerraHarbor project.
-
 This repository provides the necessary configurations and scripts to deploy and manage the infrastructure components of the TerraHarbor demo instance.
 
 ## Table of Contents
 
-- [infrastructure](#infrastructure)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-    - [terraform/\*](#terraform)
-    - [ansible/\*](#ansible)
-    - [docker-compose/\*](#docker-compose)
-      - [Running Docker Compose locally](#running-docker-compose-locally)
+- [Table of Contents](#table-of-contents)
+- [Overview](#overview)
+  - [terraform/\*](#terraform)
+  - [ansible/\*](#ansible)
+  - [docker-compose/\*](#docker-compose)
+    - [Running Docker Compose locally](#running-docker-compose-locally)
 
 ## Overview
 
