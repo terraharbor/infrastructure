@@ -112,10 +112,13 @@ services:
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
     labels:
       # Global redirection from HTTP to HTTPS.
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.http-catchall.rule=PathPrefix(`/`)"
       - "traefik.http.routers.http-catchall.entrypoints=web"
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.port=443"
+      - "traefik.http.routers.http-catchall.priority=1"
     networks:
       - internal
     ports:
