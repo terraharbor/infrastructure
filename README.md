@@ -1,4 +1,11 @@
-# infrastructure
+<h1 align="center" style="margin-top: 0px;">infrastructure</h1>
+
+<div align="center">
+
+![Release](https://img.shields.io/github/v/release/terraharbor/infrastructure?style=for-the-badge) ![License](https://img.shields.io/github/license/terraharbor/infrastructure?style=for-the-badge&logo=gplv3)
+![Deployment](https://img.shields.io/github/actions/workflow/status/terraharbor/infrastructure/ansible-docker-apply.yaml?style=for-the-badge&logo=docker&label=Deployment)
+
+</div>
 
 Infrastructure as Code repository for the TerraHarbor project.
 
