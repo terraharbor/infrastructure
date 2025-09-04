@@ -17,9 +17,9 @@ services:
       - TERRAHARBOR_DB_NAME=${TERRAHARBOR_DB_NAME}
       - TERRAHARBOR_DB_USER=${TERRAHARBOR_DB_USER}
       - TERRAHARBOR_DB_PASSWORD=${TERRAHARBOR_DB_PASSWORD}
-    # Expose the database port on the VM to make it accessible from the host machine.
-    ports:
-      - 5432:5432
+    # Expose the database port on the VM to make it accessible for debugging.
+    # ports:
+    #   - 5432:5432
     volumes:
       - db-data:/var/lib/postgresql/data:rw # This path will change for versions >= 18. Check official documentation of the Docker image.
       - /home/ubuntu/terraharbor/database/db-init.sh:/docker-entrypoint-initdb.d/db-init.sh:ro
@@ -45,29 +45,39 @@ services:
       - POSTGRES_DB=${TERRAHARBOR_DB_NAME}
       - POSTGRES_USER=${TERRAHARBOR_DB_USER}
       - POSTGRES_PASSWORD=${TERRAHARBOR_DB_PASSWORD}
-    ports:
-      - 8000:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.backend.loadbalancer.server.port=${BACKEND_PORT}"
+      - "traefik.http.routers.backend.rule=Host(`${HOSTNAME}`) && PathPrefix(`/state`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+    # Expose the backend port on the VM to make it accessible for debugging.
+    # ports:
+    #   - 8000:8000
     volumes:
       - tf-states:/data:rw
     networks:
       - internal
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   frontend:
     image: '${FRONTEND_IMAGE}:${FRONTEND_IMAGE_VERSION}'
     platform: linux/amd64
     restart: unless-stopped
     depends_on:
-      database:
+      backend:
         condition: service_healthy
-      # TODO Add healthcheck for backend service
-      # backend:
-      #   condition: service_healthy
     environment:
       - TZ=Europe/Zurich
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.frontend.loadbalancer.server.port=${FRONTEND_PORT}"
-      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_HOSTNAME}`)"
+      - "traefik.http.routers.frontend.rule=Host(`${HOSTNAME}`) && !PathPrefix(`/state`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
@@ -78,8 +88,10 @@ services:
     image: 'traefik:3.5.1'
     platform: linux/amd64
     restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
     # TODO Add healthcheck for frontend service
-    # depends_on:
     #   frontend:
     #     condition: service_healthy
     environment:
@@ -98,12 +110,19 @@ services:
       - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.letsencrypt.acme.email=goncalo.carvalheiroheleno@heig-vd.ch"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    labels:
+      # Global redirection from HTTP to HTTPS.
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
     networks:
       - internal
     ports:
       - 80:80
       - 443:443
-      - 8080:8080 # Traefik Dashboard
+      # Expose the Traefik Dashboard on the VM to make it accessible for debugging.
+      # - 8080:8080 # Traefik Dashboard
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ssl-certs:/letsencrypt:rw
