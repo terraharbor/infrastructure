@@ -9,7 +9,7 @@
 
 </div>
 
-This repository provides the necessary configurations and scripts to deploy and manage the infrastructure components of the TerraHarbor demo instance.
+This repository provides the necessary configurations and scripts to deploy and manage the infrastructure components of the TerraHarbor demo instance, available [**here**](https://terraharbor.westeurope.cloudapp.azure.com).
 
 ## Table of Contents
 
