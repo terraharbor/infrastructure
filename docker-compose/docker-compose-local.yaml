@@ -34,6 +34,7 @@ services:
     build:
       context: ../../backend
       dockerfile: Dockerfile
+    hostname: 'backend.internal'
     restart: unless-stopped
     depends_on:
       database:
