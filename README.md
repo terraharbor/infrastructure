@@ -128,7 +128,7 @@ The [`docker_apply.yaml`](./ansible/docker_apply.yaml) playbook is used to **dep
 8. Run the initialization scripts to populate the instance with data (take note of the credentials printed at the end of the script):
     ```bash
     # Get into the demo init-scripts folder.
-    cd ../demo/init-scripts
+    cd ./demo/init-scripts
 
     # Make the script executable.
     chmod +x init-data.sh
@@ -142,14 +142,14 @@ The [`docker_apply.yaml`](./ansible/docker_apply.yaml) playbook is used to **dep
 10. You can use the example Terraform code to bootstrap a state in a project:
     ```bash
     # Get into the demo terraform folder.
-    cd ../demo/terraform
+    cd ./demo/terraform-examples/null-resource
 
     # Initialize the Terraform working directory.
     export TERRAHARBOR_USER=administrator
     export TERRAHARBOR_PASSWORD=<the-admin-password-printed-by-the-init-script>
     export TF_PROJECT_ID=1
     export TF_STATE_NAME=main
-    terraform init -reconfigure \
+    terraform init \
         -backend-config="address=http://localhost/state/$TF_PROJECT_ID/$TF_STATE_NAME" \
         -backend-config="lock_address=http://localhost/state/$TF_PROJECT_ID/$TF_STATE_NAME" \
         -backend-config="unlock_address=http://localhost/state/$TF_PROJECT_ID/$TF_STATE_NAME" \
@@ -162,3 +162,5 @@ The [`docker_apply.yaml`](./ansible/docker_apply.yaml) playbook is used to **dep
     # Apply the example configuration.
     terraform apply
     ```
+
+11. You can run apply as many times as you want, and you will see new versions appear in the Terraform state history in the frontend.
