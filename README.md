@@ -4,8 +4,9 @@
 
 <div align="center">
 
-![Release](https://img.shields.io/github/v/release/terraharbor/infrastructure?style=for-the-badge) ![License](https://img.shields.io/github/license/terraharbor/infrastructure?style=for-the-badge&logo=gplv3)
-![Deployment](https://img.shields.io/github/actions/workflow/status/terraharbor/infrastructure/ansible-docker-apply.yaml?style=for-the-badge&logo=docker&label=Deployment&link=https%3A%2F%2Fgithub.com%2Fterraharbor%2Finfrastructure%2Factions%2Fworkflows%2Fansible-docker-apply.yaml)
+<a href="https://github.com/terraharbor/infrastructure/releases" target="_blank"><img alt="Release" src="https://img.shields.io/github/v/release/terraharbor/infrastructure?style=for-the-badge"></a>
+<a href="https://github.com/terraharbor/infrastructure?tab=GPL-3.0-1-ov-file#readme" target="_blank"><img alt="License" src="https://img.shields.io/github/license/terraharbor/infrastructure?style=for-the-badge&logo=gplv3"></a>
+<a href="https://github.com/terraharbor/infrastructure/actions/workflows/ansible-docker-apply.yaml" target="_blank"><img alt="Deployment" src="https://img.shields.io/github/actions/workflow/status/terraharbor/infrastructure/ansible-docker-apply.yaml?style=for-the-badge&logo=docker&label=Deployment"></a>
 
 </div>
 
