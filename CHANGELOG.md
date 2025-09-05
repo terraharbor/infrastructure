@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.1](https://github.com/terraharbor/infrastructure/compare/v1.0.0...v1.0.1) (2025-09-05)
+
+
+### Bug Fixes
+
+* add backend hostname to its service ([74d27eb](https://github.com/terraharbor/infrastructure/commit/74d27eb4fc10742d7922478991fb0261bb36a9f8))
+
+
+### Documentation
+
+* complete the getting started with bootstrap data ([611e506](https://github.com/terraharbor/infrastructure/commit/611e506b23a8a61e032cb70a734808077c61e313))
+* fix a few mistakes in the bootstrap procedure ([c99f44a](https://github.com/terraharbor/infrastructure/commit/c99f44a43e3679e92ce7277ae51df58f32287dba))
+* **readme:** remove target blank from badges ([9c0744d](https://github.com/terraharbor/infrastructure/commit/9c0744d3e5bf4740297c8404303360d706c6cce1))
+
 ## 1.0.0 (2025-09-05)
 
 
