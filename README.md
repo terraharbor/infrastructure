@@ -122,3 +122,43 @@ The [`docker_apply.yaml`](./ansible/docker_apply.yaml) playbook is used to **dep
 > docker compose --file docker-compose-local.yaml --env-file .env --env-file .env.local down --volumes
 > ```
 > Be warned that any users/projects/tokens on the SQL database will be lost, as with any Terraform state files.
+
+7. Clone the [terraharbor/demo](https://github.com/terraharbor/demo) repository to access the initialization scripts and Terraform code for demonstration purposes.
+
+8. Run the initialization scripts to populate the instance with data (take note of the credentials printed at the end of the script):
+    ```bash
+    # Get into the demo init-scripts folder.
+    cd ../demo/init-scripts
+
+    # Make the script executable.
+    chmod +x init-data.sh
+
+    # Run the script.
+    ./init-data.sh
+    ```
+ 
+9. You can now access the frontend at [http://localhost](http://localhost) and Terraform can use the backend at [http://localhost/state](http://localhost/state).
+
+10. You can use the example Terraform code to bootstrap a state in a project:
+    ```bash
+    # Get into the demo terraform folder.
+    cd ../demo/terraform
+
+    # Initialize the Terraform working directory.
+    export TERRAHARBOR_USER=administrator
+    export TERRAHARBOR_PASSWORD=<the-admin-password-printed-by-the-init-script>
+    export TF_PROJECT_ID=1
+    export TF_STATE_NAME=main
+    terraform init -reconfigure \
+        -backend-config="address=http://localhost/state/$TF_PROJECT_ID/$TF_STATE_NAME" \
+        -backend-config="lock_address=http://localhost/state/$TF_PROJECT_ID/$TF_STATE_NAME" \
+        -backend-config="unlock_address=http://localhost/state/$TF_PROJECT_ID/$TF_STATE_NAME" \
+        -backend-config="username=$TERRAHARBOR_USER" \
+        -backend-config="password=$TERRAHARBOR_PASSWORD" \
+        -backend-config="lock_method=LOCK" \
+        -backend-config="unlock_method=UNLOCK" \
+        -backend-config="retry_wait_min=5" 
+
+    # Apply the example configuration.
+    terraform apply
+    ```
