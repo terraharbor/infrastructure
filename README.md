@@ -4,9 +4,9 @@
 
 <div align="center">
 
-<a href="https://github.com/terraharbor/infrastructure/releases" target="_blank"><img alt="Release" src="https://img.shields.io/github/v/release/terraharbor/infrastructure?style=for-the-badge"></a>
-<a href="https://github.com/terraharbor/infrastructure?tab=GPL-3.0-1-ov-file#readme" target="_blank"><img alt="License" src="https://img.shields.io/github/license/terraharbor/infrastructure?style=for-the-badge&logo=gplv3"></a>
-<a href="https://github.com/terraharbor/infrastructure/actions/workflows/ansible-docker-apply.yaml" target="_blank"><img alt="Deployment" src="https://img.shields.io/github/actions/workflow/status/terraharbor/infrastructure/ansible-docker-apply.yaml?style=for-the-badge&logo=docker&label=Deployment"></a>
+<a href="https://github.com/terraharbor/infrastructure/releases"><img alt="Release" src="https://img.shields.io/github/v/release/terraharbor/infrastructure?style=for-the-badge"></a>
+<a href="https://github.com/terraharbor/infrastructure?tab=GPL-3.0-1-ov-file#readme"><img alt="License" src="https://img.shields.io/github/license/terraharbor/infrastructure?style=for-the-badge&logo=gplv3"></a>
+<a href="https://github.com/terraharbor/infrastructure/actions/workflows/ansible-docker-apply.yaml"><img alt="Deployment" src="https://img.shields.io/github/actions/workflow/status/terraharbor/infrastructure/ansible-docker-apply.yaml?style=for-the-badge&logo=docker&label=Deployment"></a>
 
 </div>
 
