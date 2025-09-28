@@ -81,7 +81,7 @@ services:
       - internal
 
   reverseproxy:
-    image: 'traefik:3.5.1@sha256:664bb8415fddadb71c2682b329c427d12c7d53593171665f2b7b6ff924509bc1'
+    image: 'traefik:v3.5.3@sha256:84eb6c0e67c99fa026bf1bf4b0afd9ad44350d375b4ebc5049c5f70543a729d6'
     restart: unless-stopped
     depends_on:
       backend:
